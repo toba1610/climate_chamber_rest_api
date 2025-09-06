@@ -1,0 +1,10 @@
+{
+    "Serialnumbers":{
+        "CMC356": "QJ743A",
+        "CMC256": "XJ198D"
+    },
+    "Standard_Outputs": {
+        "CMC256": 21,
+        "CMC356": 18
+    }
+}
