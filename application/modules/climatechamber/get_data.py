@@ -1,6 +1,6 @@
 from flask import current_app
 from datetime import datetime
-from ..climatechamber.connection import Connection_Class
+from .connection_handling import Connection_Class
 
 from typing import TYPE_CHECKING
 

@@ -1,9 +1,6 @@
 from dataclasses import dataclass
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import socket
+from application.modules.climatechamber.connection_handling import Connection_Class
+    
 
 @dataclass
 class defines:
@@ -16,4 +13,4 @@ class defines:
 @dataclass
 class connection:
 
-    client_socket: socket.socket
+    client_socket: Connection_Class
