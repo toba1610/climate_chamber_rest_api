@@ -427,7 +427,7 @@ class get_data_class():
         output = connection.send_read_command("11004", [str(chamber_number), '2'])
 
         return output
-
+#
 class manual_mode_class():
 
     '''
@@ -711,7 +711,7 @@ class manual_mode_class():
         output = connection.send_write_command('14001', [str(chamber_number), "1", "0"])
         log.log_data('info', 'Manual mode stoped')
         return output
-
+#
 class automatic_mode_class():
 
     '''
@@ -837,7 +837,7 @@ class automatic_mode_class():
         output = connection.send_write_command('19009', [str(chamber_number), str(time)])
         log.log_data('info', 'Programm will start in', time)
         return output
-
+#
 class status_class():
 
     '''

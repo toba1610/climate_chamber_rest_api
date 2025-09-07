@@ -1,10 +1,11 @@
 from flask import current_app
 from datetime import datetime
+import logging
 
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    import logging
+    
     from ...data.voetsch_data import defines
 
 
@@ -23,10 +24,10 @@ class Format_Data_Class():
         Returns the Payload Value of the input string
     '''
 
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self, logger: logging.Logger, defines_data) -> None:
 
         self.log = logger
-        self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
+        self.defines = defines_data#cast(defines ,current_app.config['COMMAND_DATA'])
 
     def format_SimServ_Cmd(self, cmdID: str, arglist: list) -> str:
 
