@@ -43,6 +43,7 @@ class manual_mode_class():
         self.log = logger
         self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TODO Die Verbindung muss zentral veraltet werden
+        self.get_data = Get_Data_Class(logger=logger)
         self.formater = Format_Data_Class(logger=logger)
 
     def set_setpoint_temperature(self, value: float, chamber_number: int = 1) -> bool:
@@ -60,17 +61,17 @@ class manual_mode_class():
 
         #Check if the warning and alarm values match the new setpoint
 
-        if get_data.get_min_temperature_warning_limit() > value:
-            self.log.warning(f'The given value is to high for warning levels {value}')
+        if self.get_data.get_min_temperature_warning_limit() > value:
+            self.log.warning(f'The given value is to high for warning levels: {value}')
             raise ValueError("Min warning level to high")
-        elif get_data.get_max_temperature_warning_limit() < value:
-            self.log.warning(f'The given value is to high for warning levels {value}')
+        elif self.get_data.get_max_temperature_warning_limit() < value:
+            self.log.warning(f'The given value is to high for warning levels: {value}')
             raise ValueError("Max warning level to low")
-        elif get_data.get_min_temperature_alarm_limit() > value:
-            self.log.warning(f'The given value is to high for alarm levels {value}')
+        elif self.get_data.get_min_temperature_alarm_limit() > value:
+            self.log.warning(f'The given value is to high for alarm levels: {value}')
             raise ValueError("Min alarm level to high")
-        elif get_data.get_max_temperature_alarm_limit() < value:
-            self.log.warning(f'The given value is to high for alarm levels {value}')
+        elif self.get_data.get_max_temperature_alarm_limit() < value:
+            self.log.warning(f'The given value is to high for alarm levels: {value}')
             raise ValueError("Max alarm level to low")
         else:
 
@@ -93,22 +94,22 @@ class manual_mode_class():
 
         #Check if the warning and alarm values match the new setpoint
 
-        if get_data.get_min_humidity_warning_limit() > value:
-            log.log_data('warning', 'The given value is to high for warning levels', value)
+        if self.get_data.get_min_humidity_warning_limit() > value:
+            self.log.warning(f'The given value is to high for warning levels: {value}')
             raise ValueError("Min warning level to high")
-        elif get_data.get_max_humidity_warning_limit() < value:
-            log.log_data('warning', 'The given value is to high for warning levels', value)
+        elif self.get_data.get_max_humidity_warning_limit() < value:
+            self.log.warning(f'The given value is to high for warning levels: {value}')
             raise ValueError("Max warning level to low")
-        elif get_data.get_min_humidity_alarm_limit() > value:
-            log.log_data('warning', 'The given value is to high for alarm levels', value)
+        elif self.get_data.get_min_humidity_alarm_limit() > value:
+            self.log.warning(f'The given value is to high for alarm levels: {value}')
             raise ValueError("Min alarm level to high")
-        elif get_data.get_max_humidity_alarm_limit() < value:
-            log.log_data('warning', 'The given value is to high for alarm levels', value)
+        elif self.get_data.get_max_humidity_alarm_limit() < value:
+            self.log.warning(f'The given value is to high for alarm levels: {value}')
             raise ValueError("Max alarm level to low")
         else:
 
-            output = connection.send_write_command('11001', [str(chamber_number), "2", str(value)])
-            log.log_data('info', 'Send new humidity setpoint succesful')
+            output = self.connection.send_write_command('11001', [str(chamber_number), "2", str(value)])
+            self.log.info('info', 'Send new humidity setpoint succesful')
             return output
 
     def set_positiv_gradient_temperature(self, gradient: float, chamber_number: int = 1) -> bool:
@@ -122,8 +123,8 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('11068', [str(chamber_number), "1", str(gradient)])
-        log.log_data('info', 'Send new positiv temperatur gradient succesful')
+        output = self.connection.send_write_command('11068', [str(chamber_number), "1", str(gradient)])
+        self.log.info('Send new positiv temperatur gradient succesful')
         return output
 
     def set_negativ_gradient_temperature(self, gradient: float, chamber_number: int = 1) -> bool:
@@ -137,8 +138,8 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('11072', [str(chamber_number), "1", str(gradient)])
-        log.log_data('info', 'Send new negativ temperatur gradient succesful')
+        output = self.connection.send_write_command('11072', [str(chamber_number), "1", str(gradient)])
+        self.log.info('Send new negativ temperatur gradient succesful')
         return output
 
     def set_positiv_gradient_humidity(self, gradient: float, chamber_number: int = 1) -> bool:
@@ -152,8 +153,8 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('11068', [str(chamber_number), "2", str(gradient)])
-        log.log_data('info', 'Send new positiv humidity gradient succesful')
+        output = self.connection.send_write_command('11068', [str(chamber_number), "2", str(gradient)])
+        self.log.info('Send new positiv humidity gradient succesful')
         return output
 
     def set_negativ_gradient_humidity(self, gradient: float, chamber_number: int = 1) -> bool:
@@ -167,8 +168,8 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('11072', [str(chamber_number), "2", str(gradient)])
-        log.log_data('info', 'Send new negativ humidity gradient succesful')
+        output = self.connection.send_write_command('11072', [str(chamber_number), "2", str(gradient)])
+        self.log.info('Send new negativ humidity gradient succesful')
         return output
 
     def set_gradient_temperature(self, setpoint: float, gradient: float, chamber_number: int = 1) -> bool:
@@ -186,7 +187,7 @@ class manual_mode_class():
 
         #Set the Start point for the gradient mode
 
-        act_temp = get_data.get_current_temperature(chamber_number)
+        act_temp = self.get_data.get_current_temperature(chamber_number)
         status = self.set_setpoint_temperature(act_temp, chamber_number)
 
         if status == True:
@@ -195,10 +196,10 @@ class manual_mode_class():
             elif gradient < 0:
                 status = self.set_negativ_gradient_temperature(gradient, chamber_number)
             else:
-                log.log_data('error', 'Gradient can not be 0', gradient)
+                self.log.error(f'Gradient can not be 0: {gradient}')
                 raise ValueError("Gradient can not be 0")
         else:
-            log.log_data('error', 'Gradient mode could not be started, start point = act_temp could not be set')
+            self.log.error(f'Gradient mode could not be started, start point = act_temp could not be set')
             raise ConnectionError('Command could not be transfered to chamber')
 
         if status == True:
@@ -221,7 +222,7 @@ class manual_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        act_humi = get_data.get_current_humidity(chamber_number)
+        act_humi = self.get_data.get_current_humidity(chamber_number)
         status = self.set_setpoint_humidity(act_humi, chamber_number)
 
         if status == True:
@@ -230,10 +231,10 @@ class manual_mode_class():
             elif gradient < 0:
                 status = self.set_negativ_gradient_humidity(gradient, chamber_number)
             else:
-                log.log_data('error', 'Gradient can not be 0', gradient)
+                self.log.error('Gradient can not be 0: {gradient}')
                 raise ValueError("gradient can not be 0")
         else:
-            log.log_data('error', 'Gradient mode could not be started, start point = act_humi could not be set')
+            self.log.error(f'Gradient mode could not be started, start point = act_humi could not be set')
             raise ConnectionError('Command could not be transfered to chamber')
 
         if status == True:
@@ -267,7 +268,7 @@ class manual_mode_class():
         if status == True:
             return True
         else:
-            log.log_data('error', 'Gradient mode couldnt be stopped')
+            self.log.error('Gradient mode couldnt be stopped')
             raise ConnectionError("Could not change Gradient")
 
     def start_man_mode(self, chamber_number: int = 1) -> bool:
@@ -280,8 +281,8 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('14001', [str(chamber_number), "1", "1"])
-        log.log_data('info', 'Manual mode started')
+        output = self.connection.send_write_command('14001', [str(chamber_number), "1", "1"])
+        self.log.info('Manual mode started')
         return output
 
     def stop_man_mode(self, chamber_number: int = 1) -> bool:
@@ -294,6 +295,6 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = connection.send_write_command('14001', [str(chamber_number), "1", "0"])
-        log.log_data('info', 'Manual mode stoped')
+        output = self.connection.send_write_command('14001', [str(chamber_number), "1", "0"])
+        self.log.info('Manual mode stoped')
         return output
