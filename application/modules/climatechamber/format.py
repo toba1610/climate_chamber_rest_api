@@ -29,7 +29,7 @@ class Format_Data_Class():
         self.log = logger
         self.defines = defines_data#cast(defines ,current_app.config['COMMAND_DATA'])
 
-    def format_SimServ_Cmd(self, cmdID: str, arglist: list) -> str:
+    def format_SimServ_Cmd(self, cmdID: str, arglist: list) -> bytes:
 
         '''
         Format the needed command with the given inputs
@@ -44,13 +44,19 @@ class Format_Data_Class():
         '''
         cmd = cmdID.encode('ascii')
 
-        for arg in arglist:
-            cmd = cmd + self.defines.DELIM
-            arg = str(arg)
-            cmd = cmd + arg.encode('ascii')
-        cmd = cmd + self.defines.CR
+        # for arg in arglist:
+        #     cmd = cmd + self.defines.DELIM
+        #     arg = str(arg)
+        #     cmd = cmd + arg.encode('ascii')
+        # cmd = cmd + self.defines.CR
 
-        return str(cmd)
+        cmd = cmdID.encode('ascii') # command ID
+        cmd = cmd + self.defines.DELIM + b'1'    # Chb Id
+        for arg in arglist:
+                cmd = cmd + self.defines.DELIM
+                cmd = cmd + arg.encode('ascii')
+        cmd = cmd + self.defines.CR
+        return cmd
 
     def format_SimServ_Data(self, data: bytes, parameter: int = 1) -> float:
 
