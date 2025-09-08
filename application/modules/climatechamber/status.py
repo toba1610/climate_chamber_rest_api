@@ -156,7 +156,7 @@ class status_class():
     def get_program_active_time(self, chamber_number: int =1) -> int:
 
         '''
-        Read the actual number of program loops
+        Read runtime of the program
 
             Parameters:
                 chamber_number (int): Number of the chamber to control
@@ -225,7 +225,7 @@ class status_class():
         Read the status of an given message number
 
             Parameters:
-                number_of_messages (str): The number of the message that should be read
+                number_of_message (str): The number of the message that should be read
                 chamber_number (int): Number of the chamber to control
 
             Returns:
