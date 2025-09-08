@@ -14,3 +14,4 @@ class defines:
 class connection:
 
     client_socket: Connection_Class
+    status: bool
