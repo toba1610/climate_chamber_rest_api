@@ -46,6 +46,7 @@ class Connection_Class():
 
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = client_socket.connect((adress, port))
+        client_socket.settimeout(5)
 
         self.connection = client_socket
 
@@ -72,7 +73,7 @@ class Connection_Class():
         '''
 
         command = self.formater.format_SimServ_Cmd(command_number, arglist)
-        self.connection.send(command.encode())
+        self.connection.send(command)
         result = self.connection.recv(512)
 
         if result == self.defines.GOOD_COMMAND:
@@ -96,8 +97,17 @@ class Connection_Class():
         '''
 
         command = self.formater.format_SimServ_Cmd(command_number, arglist)
-        self.connection.send(command.encode())
-        result = self.connection.recv(512)
+        self.connection.send(command)
+        # result = self.connection.recv(512)
+        
+        try:
+            result = self.connection.recv(512)
+        except socket.timeout:
+            print("Timeout: No response received.")
+            return 0.0
+            
+
+
         output = self.formater.format_SimServ_Data(result, 1)
 
         if output == self.defines.BAD_COMMAND:
