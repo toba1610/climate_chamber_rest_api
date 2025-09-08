@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.connection_handling import Connection_Class
 from application.data.voetsch_data import connection as con_data
+from application.modules.climatechamber.status import status_class
 
 import json
 
@@ -21,7 +22,7 @@ def connect(ip:str, port:str):
 
     if  hasattr(current_app.config, 'CONNECT_DATA'):
 
-        status = current_app.config['CONNECT_DATA'].status
+        status = current_app.config['CONNECT_DATA'].connection_status
 
         if status == False:
 
@@ -44,13 +45,16 @@ def connect(ip:str, port:str):
 
         connect_data = con_data(
             client_socket=Connection_Class(logger=logger, defines_data=defines),
-            status = False
+            connection_status= False,
+            status=None,
         )
 
         connect_data.client_socket.connect_to_chamber(adress=ip,port=port_int)
-        connect_data.status =True
+        connect_data.connection_status =True
 
         current_app.config['CONNECT_DATA'] = connect_data
+
+        current_app.config['CONNECT_DATA'].status = status_class()
         
         return Response(json.dumps(f"Connected  to {ip}:{port_int}"), mimetype="application/json")
     
@@ -59,7 +63,7 @@ def disconnect():
 
     if  'CONNECT_DATA' in current_app.config:
 
-        status = current_app.config['CONNECT_DATA'].status
+        status = current_app.config['CONNECT_DATA'].connection_status
 
         if status == True:
 
@@ -67,7 +71,7 @@ def disconnect():
 
             voetsch.close_connection()
 
-            current_app.config['CONNECT_DATA'].status = False
+            current_app.config['CONNECT_DATA'].connection_status = False
 
             return Response(json.dumps("Connection closed"), mimetype="application/json")
         

@@ -2,12 +2,13 @@ import socket
 from flask import current_app
 
 from typing import TYPE_CHECKING, cast
-from .format import Format_Data_Class
-from.get_data import Get_Data_Class
+# from .format import Format_Data_Class
+# from.get_data import Get_Data_Class
 
 if TYPE_CHECKING:
     import logging
     from ...data.voetsch_data import defines
+    from ...data.voetsch_data import connection
 
 class status_class():
 
@@ -42,10 +43,11 @@ class status_class():
             Returns the text of the given message
     '''
 
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self) -> None:
         
-        self.log = logger
-        self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
+        self.log = current_app.config['LOGGER']
+        self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
+        self.connection = cast('connection', current_app.config['CONNECT_DATA'])
 
     def get_status(self, chamber_number: int = 1) -> str:
 
@@ -59,7 +61,7 @@ class status_class():
                 status (str): Returns a string with the status Message
         '''
 
-        status_index = connection.send_read_command('10012', [str(chamber_number)])
+        status_index = self.connection.client_socket.send_read_command('10012', [str(chamber_number)])
 
         match status_index:
 
@@ -103,7 +105,7 @@ class status_class():
                     status (str): Returns a string with the program status Message
             '''
 
-            status_index = connection.send_read_command('19210', [str(chamber_number)])
+            status_index = self.connection.client_socket.send_read_command('19210', [str(chamber_number)])
 
             match status_index:
 
@@ -147,7 +149,7 @@ class status_class():
         '''
 
 
-        status = connection.send_read_command('19006', [str(chamber_number), '0'])
+        status = self.connection.client_socket.send_read_command('19006', [str(chamber_number), '0'])
         self.log.info(f'Read actual loops. loops passed: {status}')
         return int(status)
 
@@ -164,7 +166,7 @@ class status_class():
         '''
 
 
-        status = connection.send_read_command('19021', [str(chamber_number)])
+        status = self.connection.client_socket.send_read_command('19021', [str(chamber_number)])
         self.log.info('Read the passed time in the program')
         return int(status)
 
@@ -181,7 +183,7 @@ class status_class():
         '''
 
 
-        status = connection.send_read_command('19204', [str(chamber_number)])
+        status = self.connection.client_socket.send_read_command('19204', [str(chamber_number)])
         self.log.info('Read number of the running program')
         return int(status)
 
@@ -197,7 +199,7 @@ class status_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        status = connection.send_read_command('17012', [str(chamber_number)])
+        status = self.connection.client_socket.send_read_command('17012', [str(chamber_number)])
         self.log.info('Error reseted')
         return bool(status)
 
@@ -213,7 +215,7 @@ class status_class():
                 number_of_messages (int): Returns the number of configured messages
         '''
 
-        number = connection.send_read_command('17002', [str(chamber_number)])
+        number = self.connection.client_socket.send_read_command('17002', [str(chamber_number)])
         self.log.info('Number of Messages', number)
         return int(number)
 
@@ -230,7 +232,7 @@ class status_class():
                 status (bool): Returns the status of the read message
         '''
 
-        status = connection.send_read_command('17009', [str(chamber_number), str(number_of_message)])
+        status = self.connection.client_socket.send_read_command('17009', [str(chamber_number), str(number_of_message)])
 
         if status == 1:
             self.log.info('Message is active', number_of_message)
@@ -251,7 +253,7 @@ class status_class():
                 text (str): Returns the configured text of the read message
         '''
 
-        status = connection.send_read_command('17007', [str(chamber_number), str(number_of_message)])
+        status = self.connection.client_socket.send_read_command('17007', [str(chamber_number), str(number_of_message)])
         self.log.info('Message read', status)
         return str(status)
 
