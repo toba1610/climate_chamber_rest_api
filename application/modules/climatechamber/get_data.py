@@ -1,11 +1,12 @@
 from flask import current_app
 from datetime import datetime
-from .connection_handling import Connection_Class
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     import logging
+    from ...data.voetsch_data import defines
+    from ...data.voetsch_data import connection
 
 
 class Get_Data_Class():
@@ -41,10 +42,10 @@ class Get_Data_Class():
         Reads the current humidity for the specified chamber number
     '''
 
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self) -> None:
 
-        self.log = logger
-        self.connection = Connection_Class(logger=logger)
+        self.log = current_app.config['LOGGER']
+        self.connection = cast('connection', current_app.config['CONNECT_DATA'])
 
     def get_min_temperature_warning_limit(self, chamber_number: int = 1) -> float:
 
@@ -57,7 +58,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11016", [str(chamber_number), '1'])
+        output = self.connection.client_socket.send_read_command("11016", [str(chamber_number), '1'])
 
         return output
 
@@ -72,7 +73,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11017", [str(chamber_number), '1'])
+        output = self.connection.client_socket.send_read_command("11017", [str(chamber_number), '1'])
 
         return output
 
@@ -87,7 +88,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11014", [str(chamber_number), '1'])
+        output = self.connection.client_socket.send_read_command("11014", [str(chamber_number), '1'])
 
         return output
 
@@ -102,7 +103,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11015", [str(chamber_number), '1'])
+        output = self.connection.client_socket.send_read_command("11015", [str(chamber_number), '1'])
 
         return output
 
@@ -117,7 +118,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11016", [str(chamber_number), '2'])
+        output = self.connection.client_socket.send_read_command("11016", [str(chamber_number), '2'])
 
         return output
 
@@ -132,7 +133,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11017", [str(chamber_number), '2'])
+        output = self.connection.client_socket.send_read_command("11017", [str(chamber_number), '2'])
 
         return output
 
@@ -147,7 +148,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11014", [str(chamber_number), '2'])
+        output = self.connection.client_socket.send_read_command("11014", [str(chamber_number), '2'])
 
         return output
 
@@ -162,7 +163,7 @@ class Get_Data_Class():
             Returns:\n
                 formated_value (float): The read value of the chamber
         '''
-        output = self.connection.send_read_command("11015", [str(chamber_number), '2'])
+        output = self.connection.client_socket.send_read_command("11015", [str(chamber_number), '2'])
 
         return output
 
@@ -177,7 +178,7 @@ class Get_Data_Class():
             Returns:
                 output (float): The current temperature of the chamber
         '''
-        output = self.connection.send_read_command("11004", [str(chamber_number), '1'])
+        output = self.connection.client_socket.send_read_command("11004", [str(chamber_number), '1'])
 
         return output
 
@@ -192,6 +193,6 @@ class Get_Data_Class():
             Returns:
                 output (float): The current humidity of the chamber
         '''
-        output = self.connection.send_read_command("11004", [str(chamber_number), '2'])
+        output = self.connection.client_socket.send_read_command("11004", [str(chamber_number), '2'])
 
         return output
