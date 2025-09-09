@@ -24,10 +24,10 @@ class Format_Data_Class():
         Returns the Payload Value of the input string
     '''
 
-    def __init__(self, logger: logging.Logger, defines_data) -> None:
+    def __init__(self) -> None:
 
-        self.log = logger
-        self.defines = defines_data#cast(defines ,current_app.config['COMMAND_DATA'])
+        self.log = current_app.config['LOGGER']
+        self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
 
     def format_SimServ_Cmd(self, cmdID: str, arglist: list) -> bytes:
 

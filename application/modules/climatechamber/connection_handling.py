@@ -28,7 +28,7 @@ class Connection_Class():
         self.log = logger
         self.defines =  defines_data
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.formater = Format_Data_Class(logger=logger, defines_data=defines_data)
+        self.formater = Format_Data_Class()
 
     def connect_to_chamber(self, adress: str, port: int) -> bool:
 
