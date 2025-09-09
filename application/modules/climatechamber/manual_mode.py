@@ -42,7 +42,7 @@ class manual_mode_class():
     def __init__(self) -> None:
         
         self.log = current_app.config['LOGGER']
-        self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
+        self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
         self.connection = cast('connection', current_app.config['CONNECT_DATA'])
         self.get_data = Get_Data_Class()
         self.formater = Format_Data_Class()

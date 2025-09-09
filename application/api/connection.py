@@ -46,7 +46,10 @@ def connect(ip:str, port:str):
         connect_data = con_data(
             client_socket=Connection_Class(logger=logger, defines_data=defines),
             connection_status= False,
+            manual_mode= False,
+            automatic_mode= False,
             status=None,
+            manual=None
         )
 
         connect_data.client_socket.connect_to_chamber(adress=ip,port=port_int)
