@@ -8,6 +8,7 @@ from.get_data import Get_Data_Class
 if TYPE_CHECKING:
     import logging
     from ...data.voetsch_data import defines
+    from ...data.voetsch_data import connection
 
 
 class manual_mode_class():
@@ -38,13 +39,13 @@ class manual_mode_class():
         Stop the manuell mode
     '''
 
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self) -> None:
         
-        self.log = logger
+        self.log = current_app.config['LOGGER']
         self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TODO Die Verbindung muss zentral veraltet werden
-        self.get_data = Get_Data_Class(logger=logger)
-        self.formater = Format_Data_Class(logger=logger)
+        self.connection = cast('connection', current_app.config['CONNECT_DATA'])
+        self.get_data = Get_Data_Class()
+        self.formater = Format_Data_Class()
 
     def set_setpoint_temperature(self, value: float, chamber_number: int = 1) -> bool:
 
@@ -75,7 +76,7 @@ class manual_mode_class():
             raise ValueError("Max alarm level to low")
         else:
 
-            output = self.connection.send_write_command('11001', [str(chamber_number), "1", str(value)])
+            output = self.connection.client_socket.send_write_command('11001', [str(chamber_number), "1", str(value)])
             self.log.info('Send new temperature setpoint succesful')
             return output
 
@@ -108,7 +109,7 @@ class manual_mode_class():
             raise ValueError("Max alarm level to low")
         else:
 
-            output = self.connection.send_write_command('11001', [str(chamber_number), "2", str(value)])
+            output = self.connection.client_socket.send_write_command('11001', [str(chamber_number), "2", str(value)])
             self.log.info('info', 'Send new humidity setpoint succesful')
             return output
 
@@ -123,7 +124,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('11068', [str(chamber_number), "1", str(gradient)])
+        output = self.connection.client_socket.send_write_command('11068', [str(chamber_number), "1", str(gradient)])
         self.log.info('Send new positiv temperatur gradient succesful')
         return output
 
@@ -138,7 +139,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('11072', [str(chamber_number), "1", str(gradient)])
+        output = self.connection.client_socket.send_write_command('11072', [str(chamber_number), "1", str(gradient)])
         self.log.info('Send new negativ temperatur gradient succesful')
         return output
 
@@ -153,7 +154,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('11068', [str(chamber_number), "2", str(gradient)])
+        output = self.connection.client_socket.send_write_command('11068', [str(chamber_number), "2", str(gradient)])
         self.log.info('Send new positiv humidity gradient succesful')
         return output
 
@@ -168,7 +169,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('11072', [str(chamber_number), "2", str(gradient)])
+        output = self.connection.client_socket.send_write_command('11072', [str(chamber_number), "2", str(gradient)])
         self.log.info('Send new negativ humidity gradient succesful')
         return output
 
@@ -281,7 +282,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('14001', [str(chamber_number), "1", "1"])
+        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "1", "1"])
         self.log.info('Manual mode started')
         return output
 
@@ -295,6 +296,6 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.send_write_command('14001', [str(chamber_number), "1", "0"])
+        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "1", "0"])
         self.log.info('Manual mode stoped')
         return output
