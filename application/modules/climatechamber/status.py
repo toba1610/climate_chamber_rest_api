@@ -44,7 +44,7 @@ class status_class():
     '''
 
     def __init__(self) -> None:
-        
+
         self.log = current_app.config['LOGGER']
         self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
         self.connection = cast('connection', current_app.config['CONNECT_DATA'])
@@ -94,7 +94,7 @@ class status_class():
                 return 'No status found'
 
     def get_program_status(self, chamber_number: int =1) -> str:
-            
+
             '''
             Read the status of the running program
 
@@ -111,7 +111,7 @@ class status_class():
 
                 case 0:
                     message = 'Program is not running'
-            
+
                 case 1:
                     message = 'Program is running'
 
@@ -132,7 +132,7 @@ class status_class():
 
                 case _:
                     message = 'No status found'
-            
+
             self.log.info(f'Running Program status: {message}')
             return message
 
@@ -253,8 +253,8 @@ class status_class():
                 text (str): Returns the configured text of the read message
         '''
 
-        status = self.connection.client_socket.send_read_command('17007', [str(chamber_number), str(number_of_message)])
-        self.log.info('Message read', status)
+        status = self.connection.client_socket.send_read_command_message('17007', [str(chamber_number), str(number_of_message)])
+        self.log.info(f'Message read:  {status}')
         return str(status)
 
     def get_list_of_message_text(self, chamber_number: int =1) -> list:

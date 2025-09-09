@@ -81,6 +81,29 @@ class Format_Data_Class():
                 return output
    
         return output
+    
+    def format_SimServ_Message(self, data: bytes, parameter: int = 1) -> str:
+
+        '''
+        Formats the Input Data from Bytestream to string
+
+            Parameters:
+                data (bytes): Input Data from socket.recv()
+                parameter (int): Index which return value is needed
+
+            Returns:
+                output (float): The choosen item formated as float
+        '''
+
+        list = data.split(self.defines.DELIM)
+        output = ''
+
+        for index, element in enumerate(list):
+            if index == parameter:
+                output = element.decode().strip()
+                return output
+   
+        return output
  
 
     def format_date_string(self, year: int, month: int, day: int, hour: int, minute: int, second: int) -> str:

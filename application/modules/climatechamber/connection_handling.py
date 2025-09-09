@@ -105,8 +105,6 @@ class Connection_Class():
         except socket.timeout:
             print("Timeout: No response received.")
             return 0.0
-            
-
 
         output = self.formater.format_SimServ_Data(result, 1)
 
@@ -116,7 +114,39 @@ class Connection_Class():
         else:
             self.log.info(f'Data read succesful, {command_number}, {output}')
             return output
+
+    def send_read_command_message(self, command_number: str, arglist: list) -> str:
+
+        '''
+        Send the given command code and list of string arguments to the control unit and receive the wanted data
+
+            Parameters:
+                command_number (str): Number as string for the command to use
+                arglist (list): List of string with the arguments needed for the command
+
+            Returns:
+                status (float): Returns the wanted data
+        '''
+
+        command = self.formater.format_SimServ_Cmd(command_number, arglist)
+        self.connection.send(command)
+        # result = self.connection.recv(512)
         
+        try:
+            result = self.connection.recv(512)
+        except socket.timeout:
+            print("Timeout: No response received.")
+            return ''
+
+        output = self.formater.format_SimServ_Message(result, 1)
+
+        if output == self.defines.BAD_COMMAND:
+            self.log.error(f'Data could not be read from control unit: {command_number}, {arglist}')
+            raise ConnectionError ('Data couldnt be read from control unit')
+        else:
+            self.log.info(f'Data read succesful, {command_number}, {output}')
+            return output
+
     def close_connection(self) -> None:
 
         '''

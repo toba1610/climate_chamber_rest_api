@@ -58,7 +58,7 @@ def number():
 
     result = chamber_status.get_program_number()
 
-    return Response(json.dumps({'ACtive program number': result}), mimetype="application/json")
+    return Response(json.dumps({'Active program number': result}), mimetype="application/json")
 
 @get_status.route('/reset')
 def reset():
