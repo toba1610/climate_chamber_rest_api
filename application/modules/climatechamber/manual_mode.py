@@ -282,7 +282,7 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "1", "1"])
+        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "1"])
         self.log.info('Manual mode started')
         return output
 
@@ -296,6 +296,6 @@ class manual_mode_class():
             Returns:
                 status (bool): Answer if commands was succesful
         '''
-        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "1", "0"])
+        output = self.connection.client_socket.send_write_command('14001', [str(chamber_number), "0"])
         self.log.info('Manual mode stoped')
         return output
