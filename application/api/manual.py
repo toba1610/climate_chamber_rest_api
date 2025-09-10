@@ -40,20 +40,74 @@ def deactivate():
     return Response(json.dumps("Manual Mode deactivated"), mimetype="application/json")
 
 @manual.route('/start')
-def start():
+@manual.route('/start/<chamber>')
+def start(chamber: str = '1'):
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
-    voetsch.start_man_mode()
-    #b'14001\xb61\xb61\xb61\xb61\r'
-    #b'14001\xb61\xb61\xb61\xb60\r'
+    voetsch.start_man_mode(chamber_number=int(chamber))
 
     return Response(json.dumps("Chamber started"), mimetype="application/json")
 
 @manual.route('/stop')
-def stop():
+@manual.route('/stop/<chamber>')
+def stop(chamber: str = '1'):
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
-    voetsch.stop_man_mode()
-    #b'14001\xb61\xb61\xb61\xb60\r' TODO Das stoppen funktioniert nicht
+    voetsch.stop_man_mode(chamber_number=int(chamber))
 
     return Response(json.dumps("Chamber stoped"), mimetype="application/json")
+
+@manual.route('/stop_gradient')
+@manual.route('/stop_gradient/<chamber>')
+def stop_gradient(chamber: str = '1'):
+
+    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch.stop_gradient_mode(chamber_number=int(chamber))
+
+    return Response(json.dumps("Gradient set to zero"), mimetype="application/json")
+
+@manual.route('/set_gradient/humidity/<setpoint>/<gradiant>')
+@manual.route('/set_gradient/humidity/<setpoint>/<gradiant>/<chamber>')
+def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str = '1'):
+
+    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch.set_gradient_humidity(
+        setpoint=float(setpoint), 
+        gradient=float(gradiant),
+        chamber_number=int(chamber))
+
+    return Response(json.dumps(f"Humidity set target {setpoint} with a gradiant of {gradiant}"), mimetype="application/json")
+
+@manual.route('/set_gradient/temperature/<setpoint>/<gradiant>')
+@manual.route('/set_gradient/temperature/<setpoint>/<gradiant>/<chamber>')
+def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str = '1'):
+
+    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch.set_gradient_temperature(
+        setpoint=float(setpoint), 
+        gradient=float(gradiant),
+        chamber_number=int(chamber))
+
+    return Response(json.dumps(f"Temperature set target {setpoint} with a gradiant of {gradiant}"), mimetype="application/json")
+
+@manual.route('/setpoint/humidity/<setpoint>/')
+@manual.route('/setpoint/humidity/<setpoint>/<chamber>')
+def setpoint_humidity(setpoint:str, chamber: str = '1'):
+
+    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch.set_setpoint_humidity(
+        value=float(setpoint),
+        chamber_number=int(chamber))
+
+    return Response(json.dumps(f"Humidity set target {setpoint}"), mimetype="application/json")
+
+@manual.route('/setpoint/temperature/<setpoint>/')
+@manual.route('/setpoint/temperature/<setpoint>/<chamber>')
+def setpoint_temperature(setpoint:str, chamber: str = '1'):
+
+    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch.set_setpoint_temperature(
+        value=float(setpoint),
+        chamber_number=int(chamber))
+
+    return Response(json.dumps(f"Temperature set target {setpoint}"), mimetype="application/json")
