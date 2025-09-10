@@ -160,7 +160,7 @@ class manual_mode_class():
 
     def set_negativ_gradient_humidity(self, gradient: float, chamber_number: int = 1) -> bool:
         '''
-        Set the positiv gradient value for humidity
+        Set the negative gradient value for humidity
 
             Parameters:
                 gradient (float): Gradient to rech the setpoint
