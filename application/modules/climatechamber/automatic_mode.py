@@ -8,6 +8,7 @@ from.get_data import Get_Data_Class
 if TYPE_CHECKING:
     import logging
     from ...data.voetsch_data import defines
+    from ...data.voetsch_data import connection
 
 class automatic_mode_class():
 
@@ -33,12 +34,13 @@ class automatic_mode_class():
             The program is started after the given time expired
         '''
 
-    def __init__(self, logger: logging.Logger) -> None:
+    def __init__(self) -> None:
         
-        self.log = logger
-        self.defines = cast(defines ,current_app.config['COMMAND_DATA'])
+        self.log = current_app.config['LOGGER']
+        self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
+        self.connection = cast('connection', current_app.config['CONNECT_DATA'])
 
-    def start_programm(self, programm_number: int, number_of_runthrough: int, chamber_number: int = 1) -> bool:
+    def start_programm(self, programm_number: int, number_of_repetition: int = 1, chamber_number: int = 1) -> bool:
 
         '''
         Start the choosen programm in automatic mode
@@ -52,10 +54,10 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        if number_of_runthrough == 0:
-            number_of_runthrough = 1
+        if number_of_repetition == 0:
+            number_of_repetition = 1
 
-        output = connection.send_write_command('19014', [str(chamber_number), str(programm_number), str(number_of_runthrough)])
+        output = self.connection.client_socket.send_write_command('19014', [str(chamber_number), str(programm_number), str(number_of_repetition)])
         self.log.info('Programm started: {programm_number}')
         return output
 
@@ -70,7 +72,7 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        output = connection.send_write_command('19209', [str(chamber_number), str(1), str(2)])
+        output = self.connection.client_socket.send_write_command('19209', [str(chamber_number), str(1), str(2)])
         self.log.info('Programm paused')
         return output
 
@@ -85,7 +87,7 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        output = connection.send_write_command('19209', [str(chamber_number), str(1), str(4)])
+        output = self.connection.client_socket.send_write_command('19209', [str(chamber_number), str(1), str(4)])
         self.log.info('Programm returned')
         return output
 
@@ -101,7 +103,7 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        output = connection.send_write_command('19003', [str(chamber_number), str(number_of_repitition), str(0)])
+        output = self.connection.client_socket.send_write_command('19003', [str(chamber_number), str(number_of_repitition), str(0)])
         self.log.info(f'Changed Number of repetition to: {number_of_repitition}')
         return output
 
@@ -117,7 +119,7 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        output = connection.send_write_command('19207', [str(chamber_number), date])
+        output = self.connection.client_socket.send_write_command('19207', [str(chamber_number), date])
         self.log.info(f'Programm will start at: {date}')
         return output
 
@@ -133,6 +135,6 @@ class automatic_mode_class():
                 status (bool): Answer if commands was succesful
         '''
 
-        output = connection.send_write_command('19009', [str(chamber_number), str(time)])
+        output = self.connection.client_socket.send_write_command('19009', [str(chamber_number), str(time)])
         self.log.info(f'Programm will start in: {time} seconds')
         return output
