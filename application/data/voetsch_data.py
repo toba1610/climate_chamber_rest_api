@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from application.modules.climatechamber.connection_handling import Connection_Class
 from application.modules.climatechamber.status import status_class
 from application.modules.climatechamber.manual_mode import manual_mode_class
+from application.modules.climatechamber.automatic_mode import automatic_mode_class
 from typing import Optional    
 
 @dataclass
@@ -21,4 +22,5 @@ class connection:
     automatic_mode: bool
     status: Optional[status_class] = None
     manual: Optional[manual_mode_class] = None
+    automatic: Optional[automatic_mode_class] = None
     
