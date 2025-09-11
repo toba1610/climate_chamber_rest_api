@@ -60,8 +60,11 @@ class automatic_mode_class():
         output = self.connection.client_socket.send_write_command('19014', [str(chamber_number), str(programm_number), str(number_of_repetition)])
         self.log.info('Programm started: {programm_number}')
         return output
+    def set_program(self, program_number:int) -> bool:
 
-    def pause_programm(self, chamber_number: int = 1) -> bool:
+        output = self.connection.client_socket.send_write_command('19015', [str(program_number)])
+        self.log.info('program set to: {program_number}')
+        return output
         '''
         Pauses the choosen programm in automatic mode
 
