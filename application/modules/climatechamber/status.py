@@ -282,3 +282,28 @@ class status_class():
 
         self.log.info(f'These messages are active: {temp_list_of_messages}')
         return temp_list_of_messages
+    
+    def get_available_control_values(self, chamber_number: int = 1) -> list[str]:
+
+        number_of_values = self.connection.client_socket.send_read_command('11018', [str(chamber_number)])
+
+        list_of_names = []
+
+        for value in range(0, int(number_of_values)):
+
+            value_name = self.connection.client_socket.send_read_command_message('11026', [str(chamber_number), str(value)])
+            list_of_names.append(value_name)
+
+        return list_of_names
+    
+    def get_actual_temperature(self, chamber_number: int = 1) -> float:
+
+        actual_temperature = self.connection.client_socket.send_read_command('11004', [str(chamber_number), '1'])
+
+        return actual_temperature
+    
+    def get_actual_humidity(self, chamber_number: int = 1) -> float:
+
+        actual_temperature = self.connection.client_socket.send_read_command('11004', [str(chamber_number), '3'])
+
+        return actual_temperature

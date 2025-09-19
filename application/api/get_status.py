@@ -104,3 +104,30 @@ def message_list():
     result = chamber_status.get_list_of_message_text()
 
     return Response(json.dumps({'All active messages': result}), mimetype="application/json")
+
+@get_status.route('/actual_temperature')
+def actual_temperature():
+
+    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+
+    result = chamber_status.get_actual_temperature()
+
+    return Response(json.dumps({'Actual Temperature': result}), mimetype="application/json")
+
+@get_status.route('/actual_humidity')
+def actual_humidity():
+
+    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+
+    result = chamber_status.get_actual_temperature()
+
+    return Response(json.dumps({'Actual Humidity': result}), mimetype="application/json")
+
+@get_status.route('/list_of_values')
+def list_of_values():
+
+    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+
+    result = chamber_status.get_available_control_values()
+
+    return Response(json.dumps({'List of values': result}), mimetype="application/json")
