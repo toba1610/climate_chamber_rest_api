@@ -10,6 +10,6 @@ def create_app():
     app.register_blueprint(connection, url_prefix=connection.url_prefix)
     app.register_blueprint(get_status, url_prefix=get_status.url_prefix)
     app.register_blueprint(manual, url_prefix=manual.url_prefix)
-    app.register_blueprint(automatic, url_preset=automatic)
+    app.register_blueprint(automatic, url_preset=automatic.url_prefix)
 
     return app

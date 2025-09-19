@@ -6,13 +6,13 @@ from application.data.voetsch_data import connection
 
 import json
 
-automatic = Blueprint('manual', __name__)
-automatic.url_prefix = '/manual'
+automatic = Blueprint('automatic', __name__)
+automatic.url_prefix = '/automatic'
 
 @automatic.route('/')
 def index():
 
-    return Response(json.dumps("manual"), mimetype="application/json")
+    return Response(json.dumps("automatic"), mimetype="application/json")
 
 @automatic.route('/activate', methods=['PUT'])
 def activate():
