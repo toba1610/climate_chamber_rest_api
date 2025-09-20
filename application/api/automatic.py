@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.automatic_mode import automatic_mode_class
 from application.data.voetsch_data import connection
+from application.api.api_response import ApiResponse
 
 import json
 
@@ -21,14 +22,15 @@ def activate():
 
     if connection_data.manual_mode == True:
 
-        return Response(json.dumps("Manual Mode is active, stop manual mode before use of automatic mode"), mimetype="application/json")
+        return ApiResponse.error(message="Manual Mode is active, stop manual mode before use of automatic mode", errors={'manual':True})
 
     else:
 
         current_app.config['CONNECT_DATA'].automatic = automatic_mode_class()
 
         current_app.config['CONNECT_DATA'].automatic_mode = True
-        return Response(json.dumps("Automatic Mode activated"), mimetype="application/json")
+        
+        return ApiResponse.success(message="Automatic Mode activated", data={'automatic':True})
     
 @automatic.route('/deactivate', methods=['PUT'])
 def deactivate():
@@ -37,7 +39,7 @@ def deactivate():
 
     current_app.config['CONNECT_DATA'].automatic_mode = False
 
-    return Response(json.dumps("Automatic Mode deactivated"), mimetype="application/json")
+    return ApiResponse.success(message="Automatic Mode deactivated", data={'automatic':False})
 
 #/start?test_program=1&chamber=2&number_of_repetitions=5
 @automatic.route('/start', methods=['PUT'])
@@ -49,7 +51,7 @@ def start_automatic():
     voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.start_program(program_number=int(program), number_of_repetition=int(number_of_repetition), chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Program {program} started for {number_of_repetition} repitions"), mimetype="application/json")
+    return ApiResponse.success(message=f"Program {program} started for {number_of_repetition} repitions", data={'program':program, 'repetitions': number_of_repetition, 'chamber': chamber})
 
 #/start/pause?chamber=2
 @automatic.route('start/pause', methods=['PUT'])
@@ -59,7 +61,7 @@ def pause_automatic():
     voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.pause_program(chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Program paused"), mimetype="application/json")
+    return ApiResponse.success(message="Program paused", data={'paused':True})
 
 #/start/resume?chamber=2
 @automatic.route('start/resume', methods=['PUT'])
@@ -69,7 +71,7 @@ def resume_automatic():
     voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.resume_program(chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Program resumed"), mimetype="application/json")
+    return ApiResponse.success(message="Program resumed", data={'paused':False})
 
 #/start/change_repetition?chamber=2&repetition=10
 @automatic.route('start/change_repetition', methods=['PUT'])
@@ -80,7 +82,7 @@ def change_repetition():
     voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.change_number_of_repetition(chamber_number=int(chamber), number_of_repitition=int(repetition))
 
-    return Response(json.dumps(f"Program repetition changed to {repetition}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Program repetition changed to {repetition}", data={'repetition': repetition})
 
 #?program=1&year=2025&month=9&day=11&hour=14&minute=30&second=45
 @automatic.route('start/at_date/', methods=['PUT'])
@@ -108,7 +110,7 @@ def start_at_date():
     voetsch.set_program(int(program))
     voetsch.start_program_at_given_date(date= date_string, chamber_number=int(chamber))
     
-    return Response(json.dumps(f"Program: {program} will start at {date_string}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Program: {program} will start at {date_string}", data={'program':program, 'date': date_string})
 
 #?program=1&time=10&chamber=1
 @automatic.route('start/after', methods=['PUT'])
@@ -121,6 +123,6 @@ def start_after():
     voetsch.set_program(int(program))
     voetsch.start_program_after_give_time(time=int(time), chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Program: {program} will start in {time} seconds"), mimetype="application/json")
+    return ApiResponse.success(message=f"Program: {program} will start in {time} seconds", data={'program':program, 'time': time})
 
 

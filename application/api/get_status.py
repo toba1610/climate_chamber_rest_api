@@ -1,9 +1,8 @@
 from flask import Blueprint, Response, current_app
 from typing import TYPE_CHECKING, cast
 
-# from application.modules.climatechamber.connection_handling import Connection_Class
 from application.modules.climatechamber.status import status_class
-# from application.data.voetsch_data import connection as con_data
+from application.api.api_response import ApiResponse
 
 import json
 
@@ -13,7 +12,7 @@ get_status.url_prefix = '/get_status'
 @get_status.route('/')
 def index():
 
-    return Response(json.dumps("get_status"), mimetype="application/json")
+    return ApiResponse.success(message="get_status")
 
 @get_status.route('/chamber')
 def chamber():
@@ -22,7 +21,7 @@ def chamber():
 
     result = chamber_status.get_status()
 
-    return Response(json.dumps({'Chamber status': result}), mimetype="application/json")
+    return ApiResponse.success(message="Chamber status", data={"status": result})
 
 @get_status.route('/program')
 def program():
@@ -31,7 +30,7 @@ def program():
 
     result = chamber_status.get_program_status()
 
-    return Response(json.dumps({'Program status': result}), mimetype="application/json")
+    return ApiResponse.success(message="Program status", data={"status": result})
 
 @get_status.route('/loops')
 def loops():
@@ -40,7 +39,7 @@ def loops():
 
     result = chamber_status.get_actual_loops()
 
-    return Response(json.dumps({'Loops passed': result}), mimetype="application/json")
+    return ApiResponse.success(message="Loops passed", data={"loops_passed": result})
 
 @get_status.route('/time')
 def time():
@@ -49,7 +48,7 @@ def time():
 
     result = chamber_status.get_program_active_time()
 
-    return Response(json.dumps({'Program runtime [s]': result}), mimetype="application/json")
+    return ApiResponse.success(message="Program runtime", data={"runtime": result})
 
 @get_status.route('/number')
 def number():
@@ -58,7 +57,7 @@ def number():
 
     result = chamber_status.get_program_number()
 
-    return Response(json.dumps({'Active program number': result}), mimetype="application/json")
+    return ApiResponse.success(message="Active program number", data={"program_number": result})
 
 @get_status.route('/reset')
 def reset():
@@ -67,7 +66,7 @@ def reset():
 
     result = chamber_status.reset_errors()
 
-    return Response(json.dumps({'Error reset': result}), mimetype="application/json")
+    return ApiResponse.success(message="Error reset", data={"reset": result})
 
 @get_status.route('/number_of_messages')
 def number_of_messages():
@@ -76,7 +75,7 @@ def number_of_messages():
 
     result = chamber_status.get_number_of_messages()
 
-    return Response(json.dumps({'Total number of messages defiened': result}), mimetype="application/json")
+    return ApiResponse.success(message="Total number of messages defiened", data={"total_messages": result})
 
 @get_status.route('/status_of_message/<number>')
 def status_of_message(number:str):
@@ -85,7 +84,7 @@ def status_of_message(number:str):
 
     result = chamber_status.get_status_of_message(number_of_message=number)
 
-    return Response(json.dumps({f'Message {number} status': result}), mimetype="application/json")
+    return ApiResponse.success(message=f"Message {number} status", data={"status": result})
 
 @get_status.route('/message_text/<number>')
 def message_text(number:str):
@@ -94,7 +93,7 @@ def message_text(number:str):
 
     result = chamber_status.get_message_text(number_of_message=number)
 
-    return Response(json.dumps({f'Message {number} test': result}), mimetype="application/json")
+    return ApiResponse.success(message=f"Message {number} text", data={"text": result})
 
 @get_status.route('/message_list')
 def message_list():
@@ -103,7 +102,7 @@ def message_list():
 
     result = chamber_status.get_list_of_message_text()
 
-    return Response(json.dumps({'All active messages': result}), mimetype="application/json")
+    return ApiResponse.success(message="All active messages", data={"messages": result})
 
 @get_status.route('/actual_temperature')
 def actual_temperature():
@@ -112,7 +111,7 @@ def actual_temperature():
 
     result = chamber_status.get_actual_temperature()
 
-    return Response(json.dumps({'Actual Temperature': result}), mimetype="application/json")
+    return ApiResponse.success(message="Actual Temperature", data={"temperature": result})
 
 @get_status.route('/actual_humidity')
 def actual_humidity():
@@ -121,7 +120,7 @@ def actual_humidity():
 
     result = chamber_status.get_actual_temperature()
 
-    return Response(json.dumps({'Actual Humidity': result}), mimetype="application/json")
+    return ApiResponse.success(message="Actual Humidity", data={"humidity": result})
 
 @get_status.route('/list_of_values')
 def list_of_values():
@@ -130,4 +129,4 @@ def list_of_values():
 
     result = chamber_status.get_available_control_values()
 
-    return Response(json.dumps({'List of values': result}), mimetype="application/json")
+    return ApiResponse.success(message="List of available control values", data={"values": result})

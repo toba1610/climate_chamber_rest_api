@@ -1,8 +1,9 @@
-from flask import Blueprint, Response, current_app
+from flask import Blueprint, current_app
 from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.manual_mode import manual_mode_class
 from application.data.voetsch_data import connection
+from application.api.api_response import ApiResponse
 
 import json
 
@@ -12,7 +13,7 @@ manual.url_prefix = '/manual'
 @manual.route('/')
 def index():
 
-    return Response(json.dumps("manual"), mimetype="application/json")
+    return ApiResponse.success(message="manual")
 
 @manual.route('/activate')
 def activate():
@@ -21,14 +22,15 @@ def activate():
 
     if connection_data.automatic_mode == True:
 
-        return Response(json.dumps("Automatic Mode is active, stop automatic mode before use of manual mode"), mimetype="application/json")
+        return ApiResponse.error(message="Automatic Mode is active, stop automatic mode before use of manual mode", errors={'automatic':True}) 
 
     else:
 
         current_app.config['CONNECT_DATA'].manual = manual_mode_class()
 
         current_app.config['CONNECT_DATA'].manual_mode = True
-        return Response(json.dumps("Manual Mode activated"), mimetype="application/json")
+
+        return ApiResponse.success(message="Manual Mode activated", data={'manual':True})
     
 @manual.route('/deactivate')
 def deactivate():
@@ -37,7 +39,7 @@ def deactivate():
 
     current_app.config['CONNECT_DATA'].manual_mode = False
 
-    return Response(json.dumps("Manual Mode deactivated"), mimetype="application/json")
+    return ApiResponse.success(message="Manual Mode deactivated", data={'manual':False})
 
 @manual.route('/start')
 @manual.route('/start/<chamber>')
@@ -46,7 +48,7 @@ def start(chamber: str = '1'):
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.start_man_mode(chamber_number=int(chamber))
 
-    return Response(json.dumps("Chamber started"), mimetype="application/json")
+    return ApiResponse.success(message="Chamber started", data={"chamber": True})
 
 @manual.route('/stop')
 @manual.route('/stop/<chamber>')
@@ -55,7 +57,7 @@ def stop(chamber: str = '1'):
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_man_mode(chamber_number=int(chamber))
 
-    return Response(json.dumps("Chamber stoped"), mimetype="application/json")
+    return ApiResponse.success(message="Chamber stoped", data={"chamber": False})
 
 @manual.route('/stop_gradient')
 @manual.route('/stop_gradient/<chamber>')
@@ -64,7 +66,7 @@ def stop_gradient(chamber: str = '1'):
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_gradient_mode(chamber_number=int(chamber))
 
-    return Response(json.dumps("Gradient set to zero"), mimetype="application/json")
+    return ApiResponse.success(message="Gradient set to zero", data={"gradient": 0})
 
 @manual.route('/set_gradient/humidity/<setpoint>/<gradiant>')
 @manual.route('/set_gradient/humidity/<setpoint>/<gradiant>/<chamber>')
@@ -76,7 +78,7 @@ def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str = '1'):
         gradient=float(gradiant),
         chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Humidity set target {setpoint} with a gradiant of {gradiant}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Humidity set target {setpoint} with a gradiant of {gradiant}", data={"setpoint": setpoint, "gradiant": gradiant})
 
 @manual.route('/set_gradient/temperature/<setpoint>/<gradiant>')
 @manual.route('/set_gradient/temperature/<setpoint>/<gradiant>/<chamber>')
@@ -88,7 +90,7 @@ def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str = '1'):
         gradient=float(gradiant),
         chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Temperature set target {setpoint} with a gradiant of {gradiant}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Temperature set target {setpoint} with a gradiant of {gradiant}", data={"setpoint": setpoint, "gradiant": gradiant})
 
 @manual.route('/setpoint/humidity/<setpoint>/')
 @manual.route('/setpoint/humidity/<setpoint>/<chamber>')
@@ -99,7 +101,7 @@ def setpoint_humidity(setpoint:str, chamber: str = '1'):
         value=float(setpoint),
         chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Humidity set target {setpoint}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Humidity set target {setpoint}", data={"setpoint": setpoint})
 
 @manual.route('/setpoint/temperature/<setpoint>/')
 @manual.route('/setpoint/temperature/<setpoint>/<chamber>')
@@ -110,4 +112,4 @@ def setpoint_temperature(setpoint:str, chamber: str = '1'):
         value=float(setpoint),
         chamber_number=int(chamber))
 
-    return Response(json.dumps(f"Temperature set target {setpoint}"), mimetype="application/json")
+    return ApiResponse.success(message=f"Temperature set target {setpoint}", data={"setpoint": setpoint})

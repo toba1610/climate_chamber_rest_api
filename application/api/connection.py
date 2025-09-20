@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, cast
 from application.modules.climatechamber.connection_handling import Connection_Class
 from application.data.voetsch_data import connection as con_data
 from application.modules.climatechamber.status import status_class
+from application.api.api_response import ApiResponse
 
 import json
 
@@ -32,11 +33,11 @@ def connect(ip:str, port:str):
 
             current_app.config['CONNECT_DATA'].status = True
 
-            return Response(json.dumps(f"Connected  to {ip}:{port_int}"), mimetype="application/json")
+            return ApiResponse.success(message=f"Connected  to {ip}:{port_int}", data={'IP':ip, 'Port': port_int})
 
         else:
 
-            return Response(json.dumps("Connection already established"), mimetype="application/json")
+            return ApiResponse.error(message="Connection already established")
 
     else:
 
@@ -59,7 +60,7 @@ def connect(ip:str, port:str):
 
         current_app.config['CONNECT_DATA'].status = status_class()
         
-        return Response(json.dumps(f"Connected  to {ip}:{port_int}"), mimetype="application/json")
+        return ApiResponse.success(message=f"Connected  to {ip}:{port_int}", data={'IP':ip, 'Port': port_int})
     
 @connection.route('/disconnect')
 def disconnect():
@@ -76,12 +77,12 @@ def disconnect():
 
             current_app.config['CONNECT_DATA'].connection_status = False
 
-            return Response(json.dumps("Connection closed"), mimetype="application/json")
+            return ApiResponse.success(message="Connection closed")
         
         else:
             
-            return Response(json.dumps("No connection to close"), mimetype="application/json")
-        
+            return ApiResponse.error(message="No connection to close")
+
     else:
 
-        return Response(json.dumps("No connection to close"), mimetype="application/json")
+        return ApiResponse.error(message="No connection to close")
