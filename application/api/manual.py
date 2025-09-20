@@ -4,6 +4,7 @@ from typing import cast
 from application.modules.climatechamber.manual_mode import ManualModeClass
 from application.data.voetsch_data import connection
 from application.api.api_response import ApiResponse
+from application.utility.jwt_helper import jwt_required
 
 manual = Blueprint('manual', __name__)
 manual.url_prefix = '/manual'
@@ -14,6 +15,7 @@ def index():
     return ApiResponse.success(message="manual")
 
 @manual.route('/activate')
+@jwt_required
 def activate():
 
     connection_data = cast('connection', current_app.config['CONNECT_DATA'])

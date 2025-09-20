@@ -5,6 +5,7 @@ from application.modules.climatechamber.connection_handling import ConnectionCla
 from application.data.voetsch_data import connection as con_data
 from application.modules.climatechamber.status import StatusClass
 from application.api.api_response import ApiResponse
+from application.utility.jwt_helper import encode_auth_token
 
 connection = Blueprint('connection', __name__)
 connection.url_prefix = '/connection'
@@ -88,3 +89,14 @@ def disconnect():
     else:
 
         return ApiResponse.error(message="No connection to close")
+    
+@connection.route('/login', methods=['POST'])
+def login():
+    data:dict = request.get_json()
+    # Replace with real user validation
+    if data.get('username') == 'admin' and data.get('password') == 'password':
+        token = encode_auth_token(user_id=data['username'])
+        # return jsonify({'token': token})
+        return ApiResponse.success(message="Login successful", data={'token': token})
+    
+    return ApiResponse.error(message="Invalid credentials")
