@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, current_app
+from flask import Blueprint, request, current_app
 from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.status import status_class
@@ -77,8 +77,11 @@ def number_of_messages():
 
     return ApiResponse.success(message="Total number of messages defiened", data={"total_messages": result})
 
+#/status_of_message?number=1
 @get_status.route('/status_of_message/<number>')
 def status_of_message(number:str):
+
+    number = request.args.get('number', '1')
 
     chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
 
@@ -86,8 +89,11 @@ def status_of_message(number:str):
 
     return ApiResponse.success(message=f"Message {number} status", data={"status": result})
 
+#/status_of_message?number=1
 @get_status.route('/message_text/<number>')
 def message_text(number:str):
+
+    number = request.args.get('number', '1')
 
     chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
 

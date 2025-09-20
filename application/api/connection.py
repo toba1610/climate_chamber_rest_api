@@ -17,7 +17,12 @@ def index():
     
     return ApiResponse.success(message="Connection")
 
+#/connect?ip=192.168.0.1&port=2049
+@connection.route('/connect')
 def connect(ip:str, port:str):
+
+    ip = request.args.get('ip', '0.0.0.0')
+    port = request.args.get('port', '2049')
 
     port_int = int(port)
 

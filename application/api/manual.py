@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request
 from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.manual_mode import manual_mode_class
@@ -41,9 +41,11 @@ def deactivate():
 
     return ApiResponse.success(message="Manual Mode deactivated", data={'manual':False})
 
+#/start?chamber=1
 @manual.route('/start')
-@manual.route('/start/<chamber>')
-def start(chamber: str = '1'):
+def start(chamber: str):
+
+    chamber = request.args.get('chamber', '1')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.start_man_mode(chamber_number=int(chamber))
@@ -51,8 +53,9 @@ def start(chamber: str = '1'):
     return ApiResponse.success(message="Chamber started", data={"chamber": True})
 
 @manual.route('/stop')
-@manual.route('/stop/<chamber>')
-def stop(chamber: str = '1'):
+def stop(chamber: str):
+
+    chamber = request.args.get('chamber', '1')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_man_mode(chamber_number=int(chamber))
@@ -60,17 +63,22 @@ def stop(chamber: str = '1'):
     return ApiResponse.success(message="Chamber stoped", data={"chamber": False})
 
 @manual.route('/stop_gradient')
-@manual.route('/stop_gradient/<chamber>')
-def stop_gradient(chamber: str = '1'):
+def stop_gradient(chamber: str):
+
+    chamber = request.args.get('chamber', '1')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_gradient_mode(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Gradient set to zero", data={"gradient": 0})
 
-@manual.route('/set_gradient/humidity/<setpoint>/<gradiant>')
-@manual.route('/set_gradient/humidity/<setpoint>/<gradiant>/<chamber>')
-def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str = '1'):
+#/set_gradiant/humidity?setpoint=40&gradiant=5&chamber=1
+@manual.route('/set_gradient/humidity')
+def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str):
+
+    chamber = request.args.get('chamber', '1')
+    setpoint = request.args.get('setpoint', '40')
+    gradiant = request.args.get('gradiant', '5')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_gradient_humidity(
@@ -80,9 +88,13 @@ def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str = '1'):
 
     return ApiResponse.success(message=f"Humidity set target {setpoint} with a gradiant of {gradiant}", data={"setpoint": setpoint, "gradiant": gradiant})
 
-@manual.route('/set_gradient/temperature/<setpoint>/<gradiant>')
-@manual.route('/set_gradient/temperature/<setpoint>/<gradiant>/<chamber>')
-def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str = '1'):
+#/set_gradiant/temperature?setpoint=20&gradiant=5&chamber=1
+@manual.route('/set_gradient/temperature')
+def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str ):
+
+    chamber = request.args.get('chamber', '1')
+    setpoint = request.args.get('setpoint', '20')
+    gradiant = request.args.get('gradiant', '5')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_gradient_temperature(
@@ -92,9 +104,12 @@ def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str = '1'):
 
     return ApiResponse.success(message=f"Temperature set target {setpoint} with a gradiant of {gradiant}", data={"setpoint": setpoint, "gradiant": gradiant})
 
-@manual.route('/setpoint/humidity/<setpoint>/')
-@manual.route('/setpoint/humidity/<setpoint>/<chamber>')
-def setpoint_humidity(setpoint:str, chamber: str = '1'):
+#/setpoint/humidity?setpoint=40&chamber=1
+@manual.route('/setpoint/humidity/')
+def setpoint_humidity(setpoint:str, chamber: str):
+
+    chamber = request.args.get('chamber', '1')
+    setpoint = request.args.get('setpoint', '40')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_setpoint_humidity(
@@ -103,9 +118,12 @@ def setpoint_humidity(setpoint:str, chamber: str = '1'):
 
     return ApiResponse.success(message=f"Humidity set target {setpoint}", data={"setpoint": setpoint})
 
-@manual.route('/setpoint/temperature/<setpoint>/')
-@manual.route('/setpoint/temperature/<setpoint>/<chamber>')
-def setpoint_temperature(setpoint:str, chamber: str = '1'):
+#/setpoint/temperature?setpoint=20&chamber=1
+@manual.route('/setpoint/temperature/')
+def setpoint_temperature(setpoint:str, chamber: str):
+
+    chamber = request.args.get('chamber', '1')
+    setpoint = request.args.get('setpoint', '20')
 
     voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_setpoint_temperature(
