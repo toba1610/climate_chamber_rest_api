@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, current_app
+from flask import Blueprint, request, current_app
 from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.connection_handling import Connection_Class
@@ -14,9 +14,9 @@ connection.url_prefix = '/connection'
 
 @connection.route('/')
 def index():
-    return Response(json.dumps("Connection"), mimetype="application/json")
+    
+    return ApiResponse.success(message="Connection")
 
-@connection.route('/connect/<ip>:<port>')
 def connect(ip:str, port:str):
 
     port_int = int(port)
