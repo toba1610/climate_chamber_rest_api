@@ -1,15 +1,12 @@
 from flask import current_app
-from datetime import datetime
 
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    import logging
-    from ...data.voetsch_data import defines
     from ...data.voetsch_data import connection
 
 
-class Get_Data_Class():
+class GetDataClass():
 
     '''
     All commands to read Data from the controll unit

@@ -1,6 +1,5 @@
 from flask import current_app
 from datetime import datetime
-import logging
 
 from typing import TYPE_CHECKING, cast
 
@@ -43,12 +42,6 @@ class Format_Data_Class():
 
         '''
         cmd = cmdID.encode('ascii')
-
-        # for arg in arglist:
-        #     cmd = cmd + self.defines.DELIM
-        #     arg = str(arg)
-        #     cmd = cmd + arg.encode('ascii')
-        # cmd = cmd + self.defines.CR
 
         cmd = cmdID.encode('ascii') # command ID
         cmd = cmd + self.defines.DELIM + b'1'    # Chb Id

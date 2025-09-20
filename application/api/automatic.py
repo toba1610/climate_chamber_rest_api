@@ -1,11 +1,9 @@
 from flask import Blueprint, current_app, request
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from application.modules.climatechamber.automatic_mode import automatic_mode_class
+from application.modules.climatechamber.automatic_mode import AutomaticModeClass
 from application.data.voetsch_data import connection
 from application.api.api_response import ApiResponse
-
-import json
 
 automatic = Blueprint('automatic', __name__)
 automatic.url_prefix = '/automatic'
@@ -26,7 +24,7 @@ def activate():
 
     else:
 
-        current_app.config['CONNECT_DATA'].automatic = automatic_mode_class()
+        current_app.config['CONNECT_DATA'].automatic = AutomaticModeClass()
 
         current_app.config['CONNECT_DATA'].automatic_mode = True
         
@@ -48,7 +46,7 @@ def start_automatic():
     chamber = request.args.get('chamber', '1')
     number_of_repetition = request.args.get('number_of_repetitions', '1')
 
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.start_program(program_number=int(program), number_of_repetition=int(number_of_repetition), chamber_number=int(chamber))
 
     return ApiResponse.success(message=f"Program {program} started for {number_of_repetition} repitions", data={'program':program, 'repetitions': number_of_repetition, 'chamber': chamber})
@@ -58,7 +56,7 @@ def start_automatic():
 def pause_automatic():
     chamber = request.args.get('chamber', '1')
 
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.pause_program(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Program paused", data={'paused':True})
@@ -68,7 +66,7 @@ def pause_automatic():
 def resume_automatic():
     chamber = request.args.get('chamber', '1')
 
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.resume_program(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Program resumed", data={'paused':False})
@@ -79,7 +77,7 @@ def change_repetition():
     chamber = request.args.get('chamber', '1')
     repetition = request.args.get('repetition', '1')
     
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic) 
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic) 
     voetsch.change_number_of_repetition(chamber_number=int(chamber), number_of_repitition=int(repetition))
 
     return ApiResponse.success(message=f"Program repetition changed to {repetition}", data={'repetition': repetition})
@@ -106,7 +104,7 @@ def start_at_date():
                                                                     second=second
                                                                     )
     
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic)
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic)
     voetsch.set_program(int(program))
     voetsch.start_program_at_given_date(date= date_string, chamber_number=int(chamber))
     
@@ -119,7 +117,7 @@ def start_after():
     program = request.args.get('program', '1')
     time = request.args.get('time', '100')
 
-    voetsch = cast('automatic_mode_class', current_app.config['CONNECT_DATA'].automatic)
+    voetsch = cast('AutomaticModeClass', current_app.config['CONNECT_DATA'].automatic)
     voetsch.set_program(int(program))
     voetsch.start_program_after_give_time(time=int(time), chamber_number=int(chamber))
 

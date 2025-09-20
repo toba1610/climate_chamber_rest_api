@@ -1,15 +1,9 @@
 import socket
 import logging
-from flask import current_app
 
-from typing import TYPE_CHECKING, cast
 from application.modules.climatechamber.format import Format_Data_Class
-# from application.data.voetsch_data import defines
 
-if TYPE_CHECKING:
-    pass
-
-class Connection_Class():
+class ConnectionClass():
 
     '''
     Manage all LAN-Connection related actions

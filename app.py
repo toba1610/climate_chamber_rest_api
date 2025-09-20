@@ -1,18 +1,10 @@
 import json
 
 from application.factory import create_app
-# from application.data.data_structure import ConnectData
-from application.data.voetsch_data import connection
 from application.data.voetsch_data import defines
 from application.modules.climatechamber import log_data
-from application.modules.climatechamber.connection_handling import Connection_Class
-
-from typing import TYPE_CHECKING, cast
 
 app = create_app()
-
-if TYPE_CHECKING:
-    import socket
 
 def define_standard_data():
 

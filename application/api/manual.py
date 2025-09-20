@@ -1,11 +1,9 @@
 from flask import Blueprint, current_app, request
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from application.modules.climatechamber.manual_mode import manual_mode_class
+from application.modules.climatechamber.manual_mode import ManualModeClass
 from application.data.voetsch_data import connection
 from application.api.api_response import ApiResponse
-
-import json
 
 manual = Blueprint('manual', __name__)
 manual.url_prefix = '/manual'
@@ -26,7 +24,7 @@ def activate():
 
     else:
 
-        current_app.config['CONNECT_DATA'].manual = manual_mode_class()
+        current_app.config['CONNECT_DATA'].manual = ManualModeClass()
 
         current_app.config['CONNECT_DATA'].manual_mode = True
 
@@ -47,7 +45,7 @@ def start(chamber: str):
 
     chamber = request.args.get('chamber', '1')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.start_man_mode(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Chamber started", data={"chamber": True})
@@ -57,7 +55,7 @@ def stop(chamber: str):
 
     chamber = request.args.get('chamber', '1')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_man_mode(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Chamber stoped", data={"chamber": False})
@@ -67,7 +65,7 @@ def stop_gradient(chamber: str):
 
     chamber = request.args.get('chamber', '1')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.stop_gradient_mode(chamber_number=int(chamber))
 
     return ApiResponse.success(message="Gradient set to zero", data={"gradient": 0})
@@ -80,7 +78,7 @@ def set_gradient_humidity(setpoint:str, gradiant:str, chamber: str):
     setpoint = request.args.get('setpoint', '40')
     gradiant = request.args.get('gradiant', '5')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_gradient_humidity(
         setpoint=float(setpoint), 
         gradient=float(gradiant),
@@ -96,7 +94,7 @@ def set_gradient_temperature(setpoint:str, gradiant:str, chamber: str ):
     setpoint = request.args.get('setpoint', '20')
     gradiant = request.args.get('gradiant', '5')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_gradient_temperature(
         setpoint=float(setpoint), 
         gradient=float(gradiant),
@@ -111,7 +109,7 @@ def setpoint_humidity(setpoint:str, chamber: str):
     chamber = request.args.get('chamber', '1')
     setpoint = request.args.get('setpoint', '40')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_setpoint_humidity(
         value=float(setpoint),
         chamber_number=int(chamber))
@@ -125,7 +123,7 @@ def setpoint_temperature(setpoint:str, chamber: str):
     chamber = request.args.get('chamber', '1')
     setpoint = request.args.get('setpoint', '20')
 
-    voetsch = cast('manual_mode_class', current_app.config['CONNECT_DATA'].manual) 
+    voetsch = cast('ManualModeClass', current_app.config['CONNECT_DATA'].manual) 
     voetsch.set_setpoint_temperature(
         value=float(setpoint),
         chamber_number=int(chamber))

@@ -1,13 +1,10 @@
 from flask import Blueprint, request, current_app
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from application.modules.climatechamber.connection_handling import Connection_Class
+from application.modules.climatechamber.connection_handling import ConnectionClass
 from application.data.voetsch_data import connection as con_data
-from application.modules.climatechamber.status import status_class
+from application.modules.climatechamber.status import StatusClass
 from application.api.api_response import ApiResponse
-
-import json
-
 
 connection = Blueprint('connection', __name__)
 connection.url_prefix = '/connection'
@@ -32,7 +29,7 @@ def connect(ip:str, port:str):
 
         if status == False:
 
-            voetsch = cast('Connection_Class', current_app.config['CONNECT_DATA'].client_socket)
+            voetsch = cast('ConnectionClass', current_app.config['CONNECT_DATA'].client_socket)
 
             voetsch.connect_to_chamber(adress=ip,port=port_int)
 
@@ -50,7 +47,7 @@ def connect(ip:str, port:str):
         defines = current_app.config['COMMAND_DATA']
 
         connect_data = con_data(
-            client_socket=Connection_Class(logger=logger, defines_data=defines),
+            client_socket=ConnectionClass(logger=logger, defines_data=defines),
             connection_status= False,
             manual_mode= False,
             automatic_mode= False,
@@ -63,7 +60,7 @@ def connect(ip:str, port:str):
 
         current_app.config['CONNECT_DATA'] = connect_data
 
-        current_app.config['CONNECT_DATA'].status = status_class()
+        current_app.config['CONNECT_DATA'].status = StatusClass()
         
         return ApiResponse.success(message=f"Connected  to {ip}:{port_int}", data={'IP':ip, 'Port': port_int})
     
@@ -76,7 +73,7 @@ def disconnect():
 
         if status == True:
 
-            voetsch = cast('Connection_Class', current_app.config['CONNECT_DATA'].client_socket)
+            voetsch = cast('ConnectionClass', current_app.config['CONNECT_DATA'].client_socket)
 
             voetsch.close_connection()
 

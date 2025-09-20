@@ -1,10 +1,8 @@
 from flask import Blueprint, request, current_app
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from application.modules.climatechamber.status import status_class
+from application.modules.climatechamber.status import StatusClass
 from application.api.api_response import ApiResponse
-
-import json
 
 get_status = Blueprint('get_status', __name__)
 get_status.url_prefix = '/get_status'
@@ -17,7 +15,7 @@ def index():
 @get_status.route('/chamber')
 def chamber():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_status()
 
@@ -26,7 +24,7 @@ def chamber():
 @get_status.route('/program')
 def program():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_program_status()
 
@@ -35,7 +33,7 @@ def program():
 @get_status.route('/loops')
 def loops():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_actual_loops()
 
@@ -44,7 +42,7 @@ def loops():
 @get_status.route('/time')
 def time():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_program_active_time()
 
@@ -53,7 +51,7 @@ def time():
 @get_status.route('/number')
 def number():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_program_number()
 
@@ -62,7 +60,7 @@ def number():
 @get_status.route('/reset')
 def reset():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.reset_errors()
 
@@ -71,7 +69,7 @@ def reset():
 @get_status.route('/number_of_messages')
 def number_of_messages():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_number_of_messages()
 
@@ -83,7 +81,7 @@ def status_of_message(number:str):
 
     number = request.args.get('number', '1')
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_status_of_message(number_of_message=number)
 
@@ -95,7 +93,7 @@ def message_text(number:str):
 
     number = request.args.get('number', '1')
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_message_text(number_of_message=number)
 
@@ -104,7 +102,7 @@ def message_text(number:str):
 @get_status.route('/message_list')
 def message_list():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_list_of_message_text()
 
@@ -113,7 +111,7 @@ def message_list():
 @get_status.route('/actual_temperature')
 def actual_temperature():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_actual_temperature()
 
@@ -122,7 +120,7 @@ def actual_temperature():
 @get_status.route('/actual_humidity')
 def actual_humidity():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_actual_temperature()
 
@@ -131,7 +129,7 @@ def actual_humidity():
 @get_status.route('/list_of_values')
 def list_of_values():
 
-    chamber_status = cast('status_class', current_app.config['CONNECT_DATA'].status)
+    chamber_status = cast('StatusClass', current_app.config['CONNECT_DATA'].status)
 
     result = chamber_status.get_available_control_values()
 

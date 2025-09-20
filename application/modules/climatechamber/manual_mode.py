@@ -1,17 +1,15 @@
-import socket
 from flask import current_app
 
 from typing import TYPE_CHECKING, cast
 from .format import Format_Data_Class
-from.get_data import Get_Data_Class
+from.get_data import GetDataClass
 
 if TYPE_CHECKING:
-    import logging
     from ...data.voetsch_data import defines
     from ...data.voetsch_data import connection
 
 
-class manual_mode_class():
+class ManualModeClass():
 
     '''
     All commands to controll the chamber in manuel mode
@@ -44,7 +42,7 @@ class manual_mode_class():
         self.log = current_app.config['LOGGER']
         self.defines = cast('defines' ,current_app.config['COMMAND_DATA'])
         self.connection = cast('connection', current_app.config['CONNECT_DATA'])
-        self.get_data = Get_Data_Class()
+        self.get_data = GetDataClass()
         self.formater = Format_Data_Class()
 
     def set_setpoint_temperature(self, value: float, chamber_number: int = 1) -> bool:

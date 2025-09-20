@@ -1,16 +1,12 @@
-import socket
 from flask import current_app
 
 from typing import TYPE_CHECKING, cast
-# from .format import Format_Data_Class
-# from.get_data import Get_Data_Class
 
 if TYPE_CHECKING:
-    import logging
     from ...data.voetsch_data import defines
     from ...data.voetsch_data import connection
 
-class status_class():
+class StatusClass():
 
     '''
         All commands to check the status of the chamber
