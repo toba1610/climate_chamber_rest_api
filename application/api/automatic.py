@@ -1,4 +1,4 @@
-from flask import Blueprint, Response, current_app, request
+from flask import Blueprint, current_app, request
 from typing import TYPE_CHECKING, cast
 
 from application.modules.climatechamber.automatic_mode import automatic_mode_class
@@ -13,7 +13,7 @@ automatic.url_prefix = '/automatic'
 @automatic.route('/')
 def index():
 
-    return Response(json.dumps("automatic"), mimetype="application/json")
+    return ApiResponse.success(message="automatic")
 
 @automatic.route('/activate', methods=['PUT'])
 def activate():
