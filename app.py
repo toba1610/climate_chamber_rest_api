@@ -1,12 +1,17 @@
 import json
+import os
+from dotenv import load_dotenv, dotenv_values 
 
 from application.factory import create_app
 from application.data.voetsch_data import defines
 from application.modules.climatechamber import log_data
+from application.modules.user_handling import LoginHandling
 
 app = create_app()
 
 def define_standard_data():
+
+    load_dotenv() 
 
     defines_data = defines(
         DELIM= b'\xb6',
@@ -15,8 +20,11 @@ def define_standard_data():
         BAD_COMMAND= b''
     )
 
-    app.config['COMMAND_DATA'] = defines_data  
-     
+    app.config['LOGIN_HANDLER'] = LoginHandling()
+    app.config['COMMAND_DATA'] = defines_data
+    app.config['SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config['DATABASE_PATH'] = os.getenv('DATABASE_PATH', './application/data/udb.db')
+    app.config['ALLOWED_TOKEN'] = {}
 
 if __name__ == '__main__':
 
