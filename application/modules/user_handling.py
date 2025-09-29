@@ -21,6 +21,8 @@ class LoginHandling():
             entry = hashlib.sha3_512(entry.encode('utf-8'))
             entry = entry.hexdigest()
         return entry
+    
+    #TODO Add a check if database exist and when not create it.
 
     def signup(self, user: str, password: str, reentry_password: str, user_level: str) -> str:
 
