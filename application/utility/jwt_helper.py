@@ -32,6 +32,9 @@ def decode_auth_token(auth_token):
     except jwt.InvalidTokenError:
         return None
     
+
+#TODO This is garbage implement a proper way
+
 def jwt_required(f):
     
     @wraps(f)
