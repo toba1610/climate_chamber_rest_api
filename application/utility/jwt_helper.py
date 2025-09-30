@@ -1,5 +1,5 @@
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import request, jsonify
 from flask import current_app
@@ -9,8 +9,8 @@ def encode_auth_token(user_id):
     secret_key = current_app.config['SECRET_KEY']
 
     payload = {
-        'exp': datetime.utcnow() + timedelta(hours=1),
-        'iat': datetime.utcnow(),
+        'exp': str(datetime.now(timezone.utc) + timedelta(hours=1)),
+        'iat': str(datetime.now(timezone.utc)),
         'sub': user_id
     }
 
