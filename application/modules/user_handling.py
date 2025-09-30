@@ -1,6 +1,7 @@
 import hashlib
 import sqlite3 as sql
 from flask import current_app
+import os
 
 class LoginHandling():
 
@@ -21,8 +22,48 @@ class LoginHandling():
             entry = hashlib.sha3_512(entry.encode('utf-8'))
             entry = entry.hexdigest()
         return entry
-    
-    #TODO Add a check if database exist and when not create it.
+
+    def _check_db_exists(self, pre_check:str = '') -> bool:
+
+        if pre_check == '':
+            db_path = current_app.config['DATABASE_PATH']
+        else:
+            db_path = pre_check
+
+        result = os.path.exists(db_path)
+
+        return result
+        
+
+    def create_new_db(self, pre_check:str = '') -> bool:
+
+        if self._check_db_exists(pre_check=pre_check) == False:
+
+            if pre_check == '':
+                db_path = current_app.config['DATABASE_PATH']
+            else:
+                db_path = pre_check
+
+            conn = sql.connect(db_path)
+
+            cursor = conn.cursor()
+
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS User_data (
+                user TEXT,
+                password TEXT,
+                level INTEGER
+            )""")
+
+            conn.commit()
+            conn.close()
+
+            return True
+        
+        else:
+
+            return False
+
 
     def signup(self, user: str, password: str, reentry_password: str, user_level: str) -> str:
 
@@ -169,3 +210,13 @@ class LoginHandling():
 
             connection.close()
             return 'User does not exist'
+        
+    def user_login(self, user:str, password:str) -> bool:
+
+        if self._hash_entry(password) == self.read_data_from_user(user=user, parameter='password'):
+
+            return True
+        
+        else:
+
+            return False

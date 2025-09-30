@@ -18,7 +18,7 @@ def user_login():
 
     login_handler = cast('LoginHandling', current_app.config['LOGIN_HANDLER'])
 
-    if password == login_handler.read_data_from_user(user=user, parameter='password'):
+    if login_handler.user_login(user=user, password=password):
         
         token = encode_auth_token(user_id=data['username'])
         return ApiResponse.success(message="Login successful", data={'token': token})
