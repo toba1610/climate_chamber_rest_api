@@ -26,6 +26,9 @@ def define_standard_data():
     app.config['DATABASE_PATH'] = os.getenv('DATABASE_PATH', './application/data/udb.db')
     app.config['ALLOWED_TOKEN'] = {}
 
+    db_check = app.config['LOGIN_HANDLER']
+    db_check.create_new_db(pre_check= './application/data/udb.db')
+
 if __name__ == '__main__':
 
     with open('config.json', encoding='utf-8') as config:
