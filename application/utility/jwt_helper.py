@@ -9,8 +9,8 @@ def encode_auth_token(user_id):
     secret_key = current_app.config['SECRET_KEY']
 
     payload = {
-        'exp': str(datetime.now(timezone.utc) + timedelta(hours=1)),
-        'iat': str(datetime.now(timezone.utc)),
+        'exp': datetime.now(timezone.utc) + timedelta(hours=1),
+        'iat': datetime.now(timezone.utc),
         'sub': user_id
     }
 
@@ -32,9 +32,6 @@ def decode_auth_token(auth_token):
     except jwt.InvalidTokenError:
         return None
     
-
-#TODO This is garbage implement a proper way
-
 def jwt_required(f):
     
     @wraps(f)
@@ -42,7 +39,7 @@ def jwt_required(f):
         auth_header = request.headers.get('Authorization', '')
         token = auth_header.replace('Bearer ', '')
         latest_tokens = current_app.config['ALLOWED_TOKEN']
-
+    
         if not token:
             return jsonify({'msg': 'Missing token'}), 401
         user_id = decode_auth_token(token)
@@ -51,4 +48,5 @@ def jwt_required(f):
         if latest_tokens.get(user_id) != token:
             return jsonify({'msg': 'Token is not the latest or is invalid'}), 401
         return f(*args, **kwargs)
+    
     return decorated
